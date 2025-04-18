@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infosys Mindset Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/1/12/Infosys_building.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      border-radius: 10px;
+      margin-top: 30px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options label {
+      display: block;
+      margin: 5px 0;
+      background: white;
+      color: black;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .correct {
+      background-color: #28a745 !important;
+      color: white !important;
+    }
+    .wrong {
+      background-color: #dc3545 !important;
+      color: white !important;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      background: #007bff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      color: #333;
+      border-radius: 10px;
+    }
+    #barGraph {
+      margin-top: 20px;
+      height: 30px;
+      width: 100%;
+      background: #ccc;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    #barFill {
+      height: 100%;
+      background: #28a745;
+      width: 0;
+      transition: width 1s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Infosys Mindset Challenge</h2>
+    <form id="quizForm">
+      <div id="quiz"></div>
+      <button type="submit">Submit Answers</button>
+    </form>
+    <div id="result" style="display:none;">
+      <h3>Your Mindset Score</h3>
+      <div id="barGraph">
+        <div id="barFill"></div>
+      </div>
+      <p id="scoreText"></p>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { q: "How do you react to failure?", options: ["Give up", "Blame others", "Learn from it", "Ignore it"], correct: "Learn from it" },
+      { q: "What motivates you to work hard?", options: ["Money", "Recognition", "Growth", "Pressure"], correct: "Growth" },
+      { q: "How do you handle criticism?", options: ["Defensive", "Accept and grow", "Ignore", "Feel bad"], correct: "Accept and grow" },
+      { q: "What’s your view on challenges?", options: ["Avoid them", "Take them on", "Scared of them", "Blame luck"], correct: "Take them on" },
+      { q: "Which word best describes you?", options: ["Lazy", "Curious", "Angry", "Quiet"], correct: "Curious" },
+      { q: "How do you set goals?", options: ["Don't set them", "Set and forget", "Write and track", "Set too many"], correct: "Write and track" },
+      { q: "How often do you reflect on your day?", options: ["Never", "Sometimes", "Daily", "Only when stressed"], correct: "Daily" },
+      { q: "When something goes wrong, you:", options: ["Blame", "Reflect", "Get angry", "Ignore"], correct: "Reflect" },
+      { q: "Do you believe you can improve with effort?", options: ["No", "Maybe", "Yes", "Not sure"], correct: "Yes" },
+      { q: "Which mindset do you relate to?", options: ["Fixed", "Growth", "Mixed", "None"], correct: "Growth" }
+    ];
+
+    const quizDiv = document.getElementById("quiz");
+    questions.forEach((item, index) => {
+      const qDiv = document.createElement("div");
+      qDiv.className = "question";
+      qDiv.innerHTML = `<p><strong>Q${index + 1}:</strong> ${item.q}</p>`;
+      item.options.forEach((opt, i) => {
+        const optId = `q${index}opt${i}`;
+        qDiv.innerHTML += `
+          <div class="options">
+            <input type="radio" id="${optId}" name="q${index}" value="${opt}" required>
+            <label for="${optId}">${opt}</label>
+          </div>`;
+      });
+      quizDiv.appendChild(qDiv);
+    });
+
+    document.getElementById("quizForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      let correctCount = 0;
+
+      questions.forEach((item, index) => {
+        const selected = formData.get(`q${index}`);
+        const correct = item.correct;
+        const options = document.getElementsByName(`q${index}`);
+
+        options.forEach(option => {
+          const label = document.querySelector(`label[for="${option.id}"]`);
+          label.classList.remove("correct", "wrong");
+          if (option.value === correct) label.classList.add("correct");
+          if (option.checked && option.value !== correct) label.classList.add("wrong");
+        });
+
+        if (selected === correct) correctCount++;
+      });
+
+      const percent = Math.round((correctCount / questions.length) * 100);
+      document.getElementById("barFill").style.width = percent + "%";
+      document.getElementById("scoreText").innerText = `You scored ${percent}% - ${percent >= 70 ? 'Great mindset!' : percent >= 40 ? 'Good progress!' : 'Needs improvement!'}`;
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
